@@ -1,0 +1,48 @@
+{
+    "name": "fernix/wordpress-plugin",
+    "description": "",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fernando Vargas",
+            "email": "fernando.vargas@fernix.io"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Fernix\\Script\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:iofernix/wordpress-plugin-boilerplate.git"
+        }
+    ],
+    "require": {
+        "composer/installers": "^1.10",
+        "fernix/wordpress-plugin-boilerplate": "dev-develop"
+    },
+    "scripts": {
+        "remove-git-submodules": "find . -mindepth 2 -type d -name .git | xargs rm -rf",
+        "rename-plugin-composer": "find . -mindepth 2 -type f -name .composer.json | xargs dirname | xargs -I {} mv -f {}/.composer.json {}/composer.json",
+        "post-install-cmd": [
+            "Fernix\\Script\\Bootstrap::init",
+            "@remove-git-submodules",
+            "@rename-plugin-composer"
+        ],
+        "post-update-cmd": [
+            "Fernix\\Script\\Bootstrap::init",
+            "@remove-git-submodules",
+            "@rename-plugin-composer"
+        ]
+    },
+    "extra": {
+        "installer-paths": {
+            "{plugin-name}": [
+                "fernix/wordpress-plugin-boilerplate"
+            ]
+        }
+    }
+}
