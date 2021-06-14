@@ -1,4 +1,5 @@
 <?php
+
 namespace Fernix\Script;
 
 class Bootstrap
@@ -11,17 +12,19 @@ class Bootstrap
         $projectDate = date("Y");
 
         $mapping = array(
-            $io->ask("Plugin name [$projectName] : ", $projectName),
-            $io->ask("Plugin namespace [Fernix] : ", "Fernix"),
-            $io->ask("Author [Fernix] : ", "Fernix"),
-            $io->ask("Author email [info@fernix.io] : ", "info@fernix.io"),
-            $io->ask("Copyright [$projectDate IO Fernix LLC] : ", "$projectDate IO Fernix LLC"),
-            $io->ask("License [MIT] : ", "MIT")
+            "pluginName" => $io->ask("Plugin name [$projectName] : ", $projectName),
+            "pluginNamespace" => $io->ask("Plugin namespace [Fernix] : ", "Fernix"),
+            "pluginAuthor" => $io->ask("Author [Fernix] : ", "Fernix"),
+            "pluginAuthorEmail" => $io->ask("Author email [info@fernix.io] : ", "info@fernix.io"),
+            "pluginCopyright" => $io->ask("Copyright [$projectDate IO Fernix LLC] : ", "$projectDate IO Fernix LLC"),
+            "pluginLicense" => $io->ask("License [MIT] : ", "MIT"),
+            "pluginSiteName" => $io->ask("Site name [$projectName] : ", $projectName)
         );
 
-        $mapping[0] = implode('_', explode(' ', ucwords($mapping[0])));
-        $mapping[1] = implode('_', explode(' ', ucwords($mapping[1])));
-        $mapping[6] = implode('-', explode(' ', strtolower($mapping[0])));
+        $mapping["pluginName"] = implode('_', explode(' ', ucwords($mapping["pluginName"])));
+        $mapping["pluginNamespace"] = implode('_', explode(' ', ucwords($mapping["pluginNamespace"])));
+        $mapping["pluginFilename"] = implode('-', explode(' ', strtolower($mapping["pluginName"])));
+        $mapping["pluginFilenamespace"] = implode('-', explode(' ', strtolower($mapping["pluginNamespace"])));
 
         self::renameProjectFiles($projectPath, $mapping);
     }
@@ -31,13 +34,15 @@ class Bootstrap
         $directory = new \DirectoryIterator($path);
         $iterator = new \IteratorIterator($directory);
 
-        $pluginName = $mapping[0];
-        $pluginNamespace = $mapping[1];
-        $pluginFilename = $mapping[6];
-        $pluginAuthor = $mapping[2];
-        $pluginAuthorEmail = $mapping[3];
-        $pluginCopyright = $mapping[4];
-        $pluginLicense = $mapping[5];
+        $pluginName = $mapping["pluginName"];
+        $pluginNamespace = $mapping["pluginNamespace"];
+        $pluginAuthor = $mapping["pluginAuthor"];
+        $pluginAuthorEmail = $mapping["pluginAuthorEmail"];
+        $pluginCopyright = $mapping["pluginCopyright"];
+        $pluginLicense = $mapping["pluginLicense"];
+        $pluginFilename = $mapping["pluginFilename"];
+        $pluginFilenamespace = $mapping["pluginFilenamespace"];
+        $pluginSiteName = $mapping["pluginSiteName"];
 
         foreach ($iterator as $file) {
             $filePathName = $file->getPathname();
@@ -71,16 +76,18 @@ class Bootstrap
                             '/#\{Author\}/',
                             '/#\{Author_Email\}/',
                             '/#\{Copyright\}/',
-                            '/#\{License\}/'
+                            '/#\{License\}/',
+                            '/#\{site-name\}/'
                         ), array(
                             $pluginName,
                             $pluginNamespace,
                             $pluginFilename,
-                            strtolower($pluginNamespace),
+                            $pluginFilenamespace,
                             $pluginAuthor,
                             $pluginAuthorEmail,
                             $pluginCopyright,
-                            $pluginLicense
+                            $pluginLicense,
+                            $pluginSiteName
                         ), $fileContent);
 
                         fwrite($fp, $fileContent, strlen($fileContent));
